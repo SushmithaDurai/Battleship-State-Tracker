@@ -1,4 +1,4 @@
-import numpy as np
+#import numpy as np
 import sys
 
 #Function that creates an empty board
@@ -119,5 +119,5 @@ while char == 'y' or char == 'yes':
 	char = sys.stdin.readline().strip().split(" ")[0]
 
 game_state(board)
-print(np.matrix(board))
+#print(np.matrix(board))
 
