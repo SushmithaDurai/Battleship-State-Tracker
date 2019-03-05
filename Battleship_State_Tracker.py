@@ -1,4 +1,3 @@
-#import numpy as np
 import sys
 
 #Function that creates an empty board
@@ -24,13 +23,22 @@ def ship_present(board,x1,y1,x2,y2):
 #Adds a battleship to the given board
 def add_battleship(board,boardsize):
 	print("Enter the size of battleship, which is lesser than or equal to "+ str(boardsize))
-	size = int(sys.stdin.readline())
+	try:
+		size = int(sys.stdin.readline())
+	except ValueError:
+		print("Enter a numerical within "+str(boardsize))
+		return
+
 	if size > boardsize or size <= 0:
 		print("Invalid size of battleship")
 		return
 	
-	print("Enter the starting coordinates of the battleship as <x> space <y>")
-	x,y = list(map(int,sys.stdin.readline().split()))
+	print("Enter the starting coordinates of the battleship as X space Y")
+	try:
+		x,y = list(map(int,sys.stdin.readline().split()))
+	except ValueError:
+		print("Exactly two coordinates are required to place battleship")
+		return
 	#Resetting x and y such that the board coordinates starts from 1 instead of 0 - Just for better readability
 	x = x-1; y = y-1
 	if x<0 or y<0 or x >= boardsize or y >= boardsize:
@@ -41,11 +49,9 @@ def add_battleship(board,boardsize):
 		if y+size > boardsize:
 			print("This battleship cannot be placed from the starting coordinates mentioned as its size exceeds the boardsize.")
 			return
-		else:
-			#print("Placing ship Horizontly ")
+		else:			
 			direction = 'H'
-	elif y+size > boardsize:
-		#print("Placing ship Vertically")
+	elif y+size > boardsize:		
 		direction = 'V'
 	else:
 		print("Enter H for placing battleship Horizontly and V for placing the battleship Vertically ")
@@ -72,12 +78,23 @@ def add_battleship(board,boardsize):
 	return board
 
 #Takes an attack at a given position and returns HIT or MISS. If its a hit, alters the board to denote the hit.
-def attack(board,x,y):
-	if board[x][y] == 1:
-		print("Attck resulted in a HIT")
-		board[x][y] = 0
+def attack(board):
+	print("Enter attack coordinates X space Y")
+	try:
+		x,y = list(map(int,sys.stdin.readline().split()))
+	except ValueError:
+		print("Exactly two coordinates are required")
+		return
+
+	x = x-1; y = y-1	
+	if x<0 or y<0 or x >= boardsize or y >= boardsize:
+		print("Invalid coordinates")
 	else:
-		print("Attack resulted in a MISS")
+		if board[x][y] == 1:
+			print("Attck resulted in a HIT")
+			board[x][y] = 0
+		else:
+			print("Attack resulted in a MISS")
 	return board
 
 #Returns whether the player lost the game or not.
@@ -90,14 +107,24 @@ def game_state(board):
 	print("Game status: No battleship in board, Player lost the game")
 	return
 
+#Allows user to enter only Yes or No for certain questions
+def character_check(char):
+	while char not in ('y','Y','yes','YES','Yes','n','N','no','NO','No'):
+			print("Please respond with 'Yes' or 'No' ")
+			char = sys.stdin.readline().strip().split(" ")[0]
 
+	if char in ('y','Y','yes','YES','Yes'):
+		return True
+	else:
+		return False
+	
 boardsize = 10
 board = create_board(boardsize)
 
 print("Do you want to add a battleship? (y,yes or no,n)")
 char = sys.stdin.readline().strip().split(" ")[0]
 
-while char == 'y' or char == 'yes':
+while character_check(char):
 	add_battleship(board,boardsize)
 	print("Do you want to add another battleship? (y,yes or no,n)")
 	char = sys.stdin.readline().strip().split(" ")[0]
@@ -105,19 +132,11 @@ while char == 'y' or char == 'yes':
 print("Do you want to take an attack? (y,yes or no,n)")
 char = sys.stdin.readline().strip().split(" ")[0]
 
-while char == 'y' or char == 'yes':
-	print("Enter attack coordinates X space Y")
-	x,y = list(map(int,sys.stdin.readline().split()))
-	x = x-1; y = y-1	
-	
-	if x<0 or y<0 or x >= boardsize or y >= boardsize:
-		print("Invalid coordinates")
-	else:
-		attack(board,x,y)
-
-	print("Do you want to take more attacks ?(y,yes or no,n)")
+while character_check(char):
+	attack(board)
+	print("Do you want to take another attack? (y,yes or no,n)")
 	char = sys.stdin.readline().strip().split(" ")[0]
 
 game_state(board)
-#print(np.matrix(board))
+
 
